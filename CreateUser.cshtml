@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "Benutzer erstellen";
+}
+
+<div class="app-wrapper" style="max-width: 680px;">
+    <div class="tt-title-row">
+        <div>
+            <h1>Neuen Benutzer anlegen</h1>
+            <p class="tt-subtitle">Wähle zuerst die Rolle und lege danach den Account an.</p>
+        </div>
+        <a asp-action="UserList" asp-controller="Admin" class="ui-btn btn-small btn-secondary" style="width:auto; text-decoration:none;">Zurück</a>
+    </div>
+
+    <div class="form-tabs">
+        <button type="button" id="tabMentor" class="form-tab-btn active" onclick="switchRole('Mentor')">Mentor</button>
+        <button type="button" id="tabTrainee" class="form-tab-btn" onclick="switchRole('Trainee')">Trainee</button>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title" id="formCardTitle">Rolle: Mentor anlegen</h3>
+        <div class="card-content">
+            <form id="createUserForm" asp-action="CreateMentor" asp-controller="Admin" method="post">
+                <div class="ui-form-group">
+                    <label for="vorname">Vorname</label>
+                    <input type="text" id="vorname" name="vorname" required />
+                </div>
+
+                <div class="ui-form-group">
+                    <label for="nachname">Nachname</label>
+                    <input type="text" id="nachname" name="nachname" required />
+                </div>
+
+                <div class="ui-form-group">
+                    <label for="email">E-Mail-Adresse</label>
+                    <input type="email" id="email" name="email" required />
+                </div>
+
+                <div class="ui-form-group">
+                    <label for="password">Passwort</label>
+                    <input type="password" id="password" name="password" required />
+                </div>
+
+                <div id="traineeFields" class="hidden-form-section">
+                    <div class="ui-form-group">
+                        <label for="start">Ausbildungsbeginn</label>
+                        <input type="date" id="start" name="start" />
+                    </div>
+
+                    <div class="ui-form-group">
+                        <label for="ende">Voraussichtliches Ausbildungsende</label>
+                        <input type="date" id="ende" name="ende" />
+                    </div>
+                </div>
+
+                <button type="submit" class="ui-btn" style="margin-top: 25px;">Benutzer-Account erstellen</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function switchRole(role) {
+            const form = document.getElementById('createUserForm');
+            const traineeFields = document.getElementById('traineeFields');
+            const cardTitle = document.getElementById('formCardTitle');
+            const tabMentor = document.getElementById('tabMentor');
+            const tabTrainee = document.getElementById('tabTrainee');
+            const inputStart = document.getElementById('start');
+            const inputEnd = document.getElementById('ende');
+
+            if (role === 'Trainee') {
+                form.action = '/Admin/CreateTrainee';
+                cardTitle.innerText = 'Rolle: Trainee anlegen';
+                traineeFields.style.display = 'block';
+                inputStart.required = true;
+                inputEnd.required = true;
+                tabTrainee.classList.add('active');
+                tabMentor.classList.remove('active');
+            } else {
+                form.action = '/Admin/CreateMentor';
+                cardTitle.innerText = 'Rolle: Mentor anlegen';
+                traineeFields.style.display = 'none';
+                inputStart.required = false;
+                inputEnd.required = false;
+                tabMentor.classList.add('active');
+                tabTrainee.classList.remove('active');
+            }
+        }
+
+        @if (TempData["AlertMessage"] != null)
+        {
+            <text>
+            alert('@TempData["AlertMessage"]');
+            </text>
+        }
+    </script>
+}

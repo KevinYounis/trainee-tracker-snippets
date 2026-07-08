@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Anmeldung";
+    Layout = null; // Eigenständige Login-Seite ohne Standard-Menüleiste
+}
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TraineeTracker</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<body class="login-page-body">
+
+<div class="login-container">
+    <div class="app-header" style="justify-content: center;">
+        makandra<span>^</span> trainee-tracker
+    </div>
+    
+    <div class="login-content">
+        <h3>Anmeldung</h3>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <form asp-action="Login" asp-controller="Account" method="post">
+            <div class="ui-form-group">
+                <label for="email">E-Mail-Adresse</label>
+                <input type="email" id="email" name="email" required autofocus />
+            </div>
+
+            <div class="ui-form-group">
+                <label for="password">Passwort</label>
+                <input type="password" id="password" name="password" required />
+            </div>
+
+            <button type="submit" class="ui-btn">Einloggen</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

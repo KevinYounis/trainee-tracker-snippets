@@ -1,0 +1,98 @@
+@model TraineeTracker.Web.Models.TraineeProfile
+
+@{
+    ViewData["Title"] = "Mentor zuweisen";
+}
+
+<div class="app-wrapper">
+    <div class="tt-title-row">
+        <div>
+            <h1>Mentor-Zuweisung verwalten</h1>
+            <p class="tt-subtitle">Mentoren für @Model.ApplicationUser.Vorname @Model.ApplicationUser.Nachname verwalten.</p>
+        </div>
+        <a asp-action="UserList" asp-controller="Admin" class="ui-btn btn-small btn-secondary" style="width:auto; text-decoration:none;">Zurück zur Übersicht</a>
+    </div>
+    
+    <div class="grid-2">
+        <div class="card">
+            <h3 class="card-title">Trainee-Profil</h3>
+            <div class="card-content">
+                <div class="ui-form-group">
+                    <label>Name</label>
+                    <input type="text" value="@Model.ApplicationUser.Vorname @Model.ApplicationUser.Nachname" disabled />
+                </div>
+                <div class="ui-form-group">
+                    <label>E-Mail-Adresse</label>
+                    <input type="email" value="@Model.ApplicationUser.Email" disabled />
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Neuen Mentor zuweisen</h3>
+            <div class="card-content">
+                <form asp-action="AsignMentorToTrainee" asp-controller="Admin" method="post">
+                    <input type="hidden" name="traineeProfileId" value="@Model.ApplicationUserId" />
+
+                    <div class="ui-form-group">
+                        <label for="mentorProfileId">Verfügbaren Mentor auswählen</label>
+                        <select id="mentorProfileId" name="mentorProfileId" required>
+                            <option value="">-- Bitte wählen --</option>
+                            @if (ViewData["AvailableMentors"] is IEnumerable<TraineeTracker.Web.Models.MentorProfile> mentors)
+                            {
+                                foreach (var mentor in mentors)
+                                {
+                                    <option value="@mentor.ApplicationUserId">
+                                        @mentor.ApplicationUser.Vorname @mentor.ApplicationUser.Nachname (@mentor.ApplicationUser.Email)
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="ui-btn" style="margin-top: 30px;">Zuweisung speichern</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 25px;">
+        <h3 class="card-title">Bereits zugewiesene Mentoren</h3>
+        <div class="card-content" style="padding:0;">
+            @if (Model.Mentoren == null || !Model.Mentoren.Any())
+            {
+                <p style="padding:20px; font-size: 9pt; color: #626262; font-style: italic; margin:0;">Diesem Trainee sind aktuell noch keine Mentoren zugewiesen.</p>
+            }
+            else
+            {
+                <table class="ui-table" style="margin-top:0;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>E-Mail</th>
+                            <th style="text-align:right; padding-right:20px;">Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var mentor in Model.Mentoren)
+                        {
+                            <tr>
+                                <td><strong>@mentor.ApplicationUser.Vorname @mentor.ApplicationUser.Nachname</strong></td>
+                                <td>@mentor.ApplicationUser.Email</td>
+                                <td style="text-align:right; padding-right:20px;">
+                                    <form asp-action="RemoveMentorFromTrainee" asp-controller="Admin" method="post" style="margin:0;" onsubmit="return confirm('Möchtest du diesen Mentor wirklich für den Trainee austragen?');">
+                                        <input type="hidden" name="traineeProfileId" value="@Model.ApplicationUserId" />
+                                        <input type="hidden" name="mentorProfileId" value="@mentor.ApplicationUserId" />
+                                        <button type="submit" class="ui-btn btn-small" style="background:#FF0844; color:white; border:none; cursor:pointer; width:auto;">
+                                            Entfernen
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

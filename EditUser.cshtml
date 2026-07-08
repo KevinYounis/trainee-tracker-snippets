@@ -1,0 +1,68 @@
+@model TraineeTracker.Web.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Benutzer bearbeiten";
+    var rolle = ViewData["Rolle"] as string ?? "Keine";
+    var startDate = ViewData["StartDate"] as string ?? string.Empty;
+    var endDate = ViewData["EndDate"] as string ?? string.Empty;
+}
+
+<div class="app-wrapper" style="max-width: 680px;">
+    <div class="tt-title-row">
+        <div>
+            <h1>Account bearbeiten</h1>
+            <p class="tt-subtitle">Systemrolle: @rolle</p>
+        </div>
+        <a asp-action="UserList" asp-controller="Admin" class="ui-btn btn-small btn-secondary" style="width:auto; text-decoration:none;">Abbrechen</a>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Stammdaten</h3>
+        <div class="card-content">
+            <form asp-action="EditUser" asp-controller="Admin" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+
+                <div class="ui-form-group">
+                    <label for="vorname">Vorname</label>
+                    <input type="text" id="vorname" name="vorname" value="@Model.Vorname" required />
+                </div>
+
+                <div class="ui-form-group">
+                    <label for="nachname">Nachname</label>
+                    <input type="text" id="nachname" name="nachname" value="@Model.Nachname" required />
+                </div>
+
+                <div class="ui-form-group">
+                    <label for="email">E-Mail-Adresse / Benutzername</label>
+                    <input type="email" id="email" name="email" value="@Model.Email" required />
+                </div>
+
+                <div class="ui-form-group" style="margin-top: 25px; padding: 10px; background: #FFF3CD; border: 1px solid #FFEBAA; border-radius: 4px;">
+                    <label for="newPassword" style="color: #856404;">Neues Passwort vergeben (optional)</label>
+                    <input type="password" id="newPassword" name="newPassword" placeholder="Leer lassen, um aktuelles Passwort zu behalten" />
+                    <small style="font-size: 7.5pt; color: #856404; display:block; margin-top:5px;">Wenn du hier ein Passwort einträgst, wird das alte Passwort überschrieben.</small>
+                </div>
+
+                @if (rolle == "Trainee")
+                {
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #EAEAEA;">
+                        <div class="ui-form-group">
+                            <label for="startDate">Ausbildungsbeginn</label>
+                            <input type="date" id="startDate" name="startDate" value="@startDate" required />
+                        </div>
+
+                        <div class="ui-form-group">
+                            <label for="endDate">Voraussichtliches Ausbildungsende</label>
+                            <input type="date" id="endDate" name="endDate" value="@endDate" required />
+                        </div>
+                    </div>
+                }
+
+                <div class="button-row" style="justify-content:flex-start; margin-top:30px;">
+                    <button type="submit" class="ui-btn ui-btn-primary">Änderungen speichern</button>
+                    <a asp-action="UserList" asp-controller="Admin" class="ui-btn ui-btn-secondary">Abbrechen</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

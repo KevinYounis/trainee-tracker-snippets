@@ -1,0 +1,104 @@
+@model IEnumerable<TraineeTracker.Web.Controllers.UserWithRoleViewModel>
+
+@{
+    ViewData["Title"] = "Benutzerverwaltung";
+    var currentSearch = Context.Request.Query["search"].ToString();
+}
+
+<div class="app-wrapper">
+    <div class="tt-title-row">
+        <div>
+            <h1>Benutzerverwaltung</h1>
+            <p class="tt-subtitle">Accounts suchen, bearbeiten, deaktivieren und Mentoren zuweisen.</p>
+        </div>
+        <a asp-action="CreateUser" asp-controller="Admin" class="ui-btn btn-small" style="width:auto;">+ Neuen User anlegen</a>
+    </div>
+
+    <div class="dashboard-toolbar">
+        <form asp-action="UserList" asp-controller="Admin" method="get" class="search-form">
+            <div class="ui-form-group" style="margin:0; flex-grow:1;">
+                <input type="text" name="search" value="@currentSearch" placeholder="Nach Namen oder E-Mail suchen..." />
+            </div>
+            <button type="submit" class="ui-btn btn-small" style="width:100px;">Suchen</button>
+            @if (!string.IsNullOrEmpty(currentSearch))
+            {
+                <a asp-action="UserList" asp-controller="Admin" class="ui-btn btn-small btn-secondary" style="text-decoration:none; text-align:center;">Zurücksetzen</a>
+            }
+        </form>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Registrierte Accounts</h3>
+        <div class="card-content" style="padding:0;">
+            @if (Model == null || !Model.Any())
+            {
+                <p style="padding:20px; font-size:9.5pt; color:#626262; font-style:italic; margin:0;">Keine Benutzer gefunden.</p>
+            }
+            else
+            {
+                <table class="ui-table" style="margin-top:0;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>E-Mail-Adresse</th>
+                            <th>Rolle</th>
+                            <th>Status</th>
+                            <th style="text-align:right; padding-right:20px;">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-action="EditUser" asp-controller="Admin" asp-route-userId="@item.User.Id" style="color:#141210; text-decoration:underline; font-weight:bold;">
+                                        @item.User.Vorname @item.User.Nachname
+                                    </a>
+                                </td>
+                                <td>@item.User.Email</td>
+                                <td>
+                                    <span style="background: #EAEAEA; color: #141210; padding: 4px 10px; border-radius: 4px; font-size: 8.5pt; font-weight: bold; display: inline-block;">
+                                    @item.Rolle
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (item.User.IstAktiv)
+                                    {
+                                        <span class="badge badge-success">Aktiv</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">Inaktiv</span>
+                                    }
+                                </td>
+                                <td style="text-align:right; padding-right:20px;">
+                                    <div style="display:inline-flex; gap:5px; justify-content:flex-end; align-items:center; flex-wrap:wrap;">
+                                        @if (item.Rolle == "Trainee" && item.User.IstAktiv)
+                                        {
+                                            <a asp-action="AsignMentorToTrainee" asp-controller="Admin" asp-route-traineeProfileId="@item.User.Id" class="ui-btn btn-small btn-secondary" style="text-decoration:none;">Mentor verwalten</a>
+                                        }
+
+                                        @if (item.User.IstAktiv)
+                                        {
+                                            <form asp-action="CloseUser" asp-controller="Admin" method="post" style="margin:0;" onsubmit="return confirm('Account deaktivieren?');">
+                                                <input type="hidden" name="userId" value="@item.User.Id" />
+                                                <button type="submit" class="ui-btn btn-small" style="background:linear-gradient(90deg, #626262 0%, #AFAFAF 100%);">Deaktivieren</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="ReactivateUser" asp-controller="Admin" method="post" style="margin:0;">
+                                                <input type="hidden" name="userId" value="@item.User.Id" />
+                                                <button type="submit" class="ui-btn btn-small" style="background:linear-gradient(90deg, #28A745 0%, #5CB85C 100%); color:white;">Reaktivieren</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

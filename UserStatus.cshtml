@@ -1,0 +1,77 @@
+@model TraineeTracker.Web.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Benutzerstatus & Details";
+}
+
+<div class="app-wrapper" style="max-width: 760px;">
+    <div class="tt-title-row">
+        <div>
+            <h1>Konto-Details</h1>
+            <p class="tt-subtitle">Statusverwaltung für @Model.Vorname @Model.Nachname.</p>
+        </div>
+        <a asp-action="UserList" asp-controller="Admin" class="ui-btn btn-small btn-secondary" style="width:auto; text-decoration:none;">Zurück Übersicht</a>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Stammdaten</h3>
+        <div class="card-content">
+            <div class="grid-2" style="margin-bottom: 20px;">
+                <div class="ui-form-group">
+                    <label>Vorname</label>
+                    <input type="text" value="@Model.Vorname" disabled />
+                </div>
+                <div class="ui-form-group">
+                    <label>Nachname</label>
+                    <input type="text" value="@Model.Nachname" disabled />
+                </div>
+            </div>
+
+            <div class="ui-form-group" style="margin-bottom: 20px;">
+                <label>E-Mail-Adresse</label>
+                <input type="email" value="@Model.Email" disabled />
+            </div>
+
+            <div class="ui-form-group" style="margin-bottom: 20px;">
+                <label>Interne System-ID</label>
+                <input type="text" value="@Model.Id" disabled style="font-family: monospace; background-color: #f1f1f1;" />
+            </div>
+
+            <div class="tt-message @(Model.IstAktiv ? "tt-message-success" : "tt-message-error")">
+                @if (Model.IstAktiv)
+                {
+                    <span>Der Account ist aktiv und kann sich anmelden.</span>
+                }
+                else
+                {
+                    <span>Der Account ist deaktiviert und kann sich aktuell nicht anmelden.</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="border-color: #FF0844;">
+        <h3 class="card-title" style="background: #FF0844;">Status ändern</h3>
+        <div class="card-content">
+            @if (Model.IstAktiv)
+            {
+                <p>Wenn du dieses Konto deaktivierst, kann sich der Benutzer nicht mehr anmelden. Die Daten bleiben erhalten.</p>
+                <form asp-action="CloseUser" asp-controller="Admin" method="post" onsubmit="return confirm('Möchtest du den Account von @Model.Vorname @Model.Nachname wirklich sperren?');">
+                    <input type="hidden" name="userId" value="@Model.Id" />
+                    <button type="submit" class="ui-btn" style="background: linear-gradient(90deg, #FF0844 0%, #141210 100%); color:white;">
+                        Account deaktivieren
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form asp-action="ReactivateUser" asp-controller="Admin" method="post">
+                    <input type="hidden" name="userId" value="@Model.Id" />
+                    <button type="submit" class="ui-btn" style="background: linear-gradient(90deg, #28A745 0%, #5CB85C 100%); color:white;">
+                        Account reaktivieren
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
